@@ -52,6 +52,11 @@
 #include "mbedtls/threading.h"
 #include "mbedtls/error.h"
 
+// local modification for psram allocation mhill jul 24 2024
+// there should be something here for cross-platform compilation, if we ever care about
+// pushing this back to the main library
+#include <esp_heap_caps.h>
+
 /* C runtime includes. */
 #include <string.h>
 
@@ -323,12 +328,12 @@ typedef struct P11Session
  * @brief The global PKCS #11 module object.
  * Entropy/randomness and object lists are shared across PKCS #11 sessions.
  */
-static P11Struct_t xP11Context;
+static EXT_RAM_BSS_ATTR P11Struct_t xP11Context;
 
 /**
  * @brief The global PKCS #11 session list.
  */
-static P11Session_t pxP11Sessions[ pkcs11configMAX_SESSIONS ] = { 0 };
+static EXT_RAM_BSS_ATTR P11Session_t pxP11Sessions[ pkcs11configMAX_SESSIONS ] = { 0 };
 
 /**
  * @brief Helper to check if the current session is initialized and valid.
